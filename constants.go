@@ -3,15 +3,17 @@ package huaweipush
 const (
 	accessTokenAPI      = "https://login.vmall.com/oauth2/token"
 	baseAPI             = "https://api.vmall.com/rest.php"
-	apiMethodPrefix     = "openpush.openapi."
-	lbsSendURL          = "lbs_send"
-	notificationSendURL = "notification_send"
-	setUserTagURL       = "set_user_tag"
-	queryAppTagsSendURL = "query_app_tags"
-	deleteUserTagURL    = "delete_user_tag"
-	queryUserTagSendURL = "query_user_tag"
-	queryMsgResultURL   = "query_msg_result"
-	getTokenByDateURL   = "get_token_by_date"
+	apiMethodPrefix     = "openpush."
+	singleSendURL       = "message.single_send"
+	batchSendURL        = "message.batch_send"
+	lbsSendURL          = "openapi.lbs_send"
+	notificationSendURL = "openapi.notification_send"
+	setUserTagURL       = "openapi.set_user_tag"
+	queryAppTagsSendURL = "openapi.query_app_tags"
+	deleteUserTagURL    = "openapi.delete_user_tag"
+	queryUserTagSendURL = "openapi.query_user_tag"
+	queryMsgResultURL   = "openapi.query_msg_result"
+	getTokenByDateURL   = "openapi.get_token_by_date"
 )
 
 var (
