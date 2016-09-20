@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func doPost(url string, params map[string]string) ([]byte, error) {
+func doPost(url string, params map[string]interface{}) ([]byte, error) {
 	var result []byte
 	var req *http.Request
 	var resp *http.Response

@@ -20,12 +20,12 @@ func init() {
 }
 
 func requestAccess(clientID, clientSecret string) (string, error) {
-	nowSeconds := time.Now().Second()
+	nowSeconds := time.Now().Unix()
 	if tokenInstance.expire > nowSeconds && tokenInstance.accessToken != "" {
 		return tokenInstance.accessToken, nil
 	}
 
-	params := make(map[string]string)
+	params := make(map[string]interface{})
 	params["client_id"] = clientID
 	params["client_secret"] = clientSecret
 	params["grant_type"] = "client_credentials"

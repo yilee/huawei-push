@@ -11,12 +11,6 @@ type AndroidMessage struct {
 	extra                  []map[string]interface{} `json:"extra"`                    // 用户自定义 dict
 }
 
-type IOSMessage struct {
-	aps    map[string]interface{} `json:"aps"`
-	doings int32                  `json:"doings"` // 1：直接打开应用, 2：通过自定义动作打开应用, 3：打开URL, 4：富媒体消息, 5：短信收件箱广告, 6：彩信收件箱广告
-	url    string                 `json:"doings"` // 链接 当doings的取值为3时，必须携带该字段
-}
-
 func NewAndroidMessage(notificationTitle, notificationContent string) *AndroidMessage {
 	return &AndroidMessage{
 		notificationTitle:   notificationTitle,
@@ -28,7 +22,7 @@ func (a *AndroidMessage) addExtra(k, v string) *AndroidMessage {
 	extra := make(map[string]interface{})
 	extra[k] = v
 	a.extra = append(a.extra, extra)
-	return extra
+	return a
 }
 
 /*
