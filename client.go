@@ -18,9 +18,8 @@ func Init(appSecret string) {
 }
 
 func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error) {
-	params := n.Map()
-	fmt.Printf("params=%#v\n", params)
-	bytes, err := doPost(baseAPI+apiMethodPrefix+singleSendURL, params)
+	params := n.Form()
+	bytes, err := doPost(baseAPI, params)
 	if err != nil {
 		fmt.Errorf("post err:%v\n", err)
 		return nil, err

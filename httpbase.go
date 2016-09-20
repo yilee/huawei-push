@@ -1,22 +1,18 @@
 package huaweipush
 
 import (
-	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
-func doPost(url string, params map[string]interface{}) ([]byte, error) {
+func doPost(url string, form url.Values) ([]byte, error) {
 	var result []byte
 	var req *http.Request
 	var resp *http.Response
 	var err error
-	data, err := json.Marshal(params)
-	if err != nil {
-		return nil, err
-	}
-	req, err = http.NewRequest("POST", url, bytes.NewBuffer(data))
+	req, err = http.NewRequest("POST", url, strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	client := &http.Client{}
 	resp, err = client.Do(req)

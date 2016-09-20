@@ -2,42 +2,45 @@ package huaweipush
 
 import (
 	"encoding/json"
+	"net/url"
 	"time"
 )
 
 type HWToken struct {
-	accessToken string `json:"access_token"`
-	expire      int64  `json:"expires_in"`
+	AccessToken      string `json:"access_token"`
+	Expire           int64  `json:"expires_in"`
+	Scope            string `json:"scope"`
+	Error            int32  `json:"error"`
+	ErrorDescription string `json:"error_description"`
 }
 
 var tokenInstance *HWToken
 
 func init() {
 	tokenInstance = &HWToken{
-		accessToken: "",
-		expire:      -1,
+		AccessToken: "",
+		Expire:      -1,
 	}
 }
 
-func requestAccess(clientID, clientSecret string) (string, error) {
+func RequestAccess(clientID, clientSecret string) (*HWToken, error) {
 	nowSeconds := time.Now().Unix()
-	if tokenInstance.expire > nowSeconds && tokenInstance.accessToken != "" {
-		return tokenInstance.accessToken, nil
+	if tokenInstance.Expire > nowSeconds && tokenInstance.AccessToken != "" {
+		return tokenInstance, nil
 	}
-
-	params := make(map[string]interface{})
-	params["client_id"] = clientID
-	params["client_secret"] = clientSecret
-	params["grant_type"] = "client_credentials"
-	bytes, err := doPost(accessTokenAPI, params)
+	form := url.Values{}
+	form.Add("client_id", clientID)
+	form.Add("client_secret", clientSecret)
+	form.Add("grant_type", "client_credentials")
+	bytes, err := doPost(accessTokenAPI, form)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	var newToken HWToken
 	err = json.Unmarshal(bytes, &newToken)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	tokenInstance = &newToken
-	return tokenInstance.accessToken, nil
+	return tokenInstance, nil
 }

@@ -1,26 +1,9 @@
 package huaweipush
 
-//
-//type Notification struct {
-//	tokens      string
-//	appMethod   string
-//	nspTS       int64
-//	nspSVC      string
-//	nspFmt      string
-//	accessToken string
-//	android     string
-//}
-//
-//func NewNotification(token, access_token, android string) *Notification {
-//	return &Notification{
-//		tokens:      token,
-//		nspTS:       time.Now().Second(),
-//		nspSVC:      apiMethodPrefix + notificationSendURL,
-//		nspFmt:      "JSON",
-//		accessToken: access_token,
-//		android:     android,
-//	}
-//}
+import (
+	"net/url"
+	"strconv"
+)
 
 type SingleNotification struct {
 	deviceToken string // 32 字节长度，由系统分配的合法TMID
@@ -67,15 +50,15 @@ func (s *SingleNotification) SetCacheMode(cacheMode int32) *SingleNotification {
 	return s
 }
 
-func (s *SingleNotification) Map() map[string]interface{} {
-	m := make(map[string]interface{})
-	m["deviceToken"] = s.deviceToken
-	m["message"] = s.message
-	m["priority"] = s.priority
-	m["cacheMode"] = s.cacheMode
-	m["msgType"] = s.msgType
-	m["requestID"] = s.requestID
-	m["expireTime"] = s.expireTime
+func (s *SingleNotification) Form() url.Values {
+	m := url.Values{}
+	m.Add("deviceToken", s.deviceToken)
+	m.Add("message", s.message)
+	m.Add("priority", strconv.FormatInt(int64(s.priority), 10))
+	m.Add("cacheMode", strconv.FormatInt(int64(s.cacheMode), 10))
+	m.Add("msgType", strconv.FormatInt(int64(s.msgType), 10))
+	m.Add("requestID", s.requestID)
+	m.Add("expireTime", s.expireTime)
 	return m
 }
 

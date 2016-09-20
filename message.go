@@ -24,12 +24,3 @@ func (a *AndroidMessage) addExtra(k, v string) *AndroidMessage {
 	a.extra = append(a.extra, extra)
 	return a
 }
-
-/*
-tags                   map[string]interface{}   `json:"tags"`                     // 用户标签，目前仅对android用户生效
-	excludeTags            map[string]interface{}   `json:"exclude_tags"`             // 需要剔除的用户的标签，目前仅对android用户生效
-	sendTime               string                   `json:"send_time"`                // 消息生效时间。如果不携带该字段，则表示消息实时生效。实际使用时，该字段精确到分, timestamp格式ISO 8601：2013-06-03T17:30:08+08:00
-	expireTime             string                   `json:"expire_time"`              // 消息过期删除时间, 格式同上
-	deviceType             int32                    `json:"device_type"`              // 目标设备类型, 1：android; 2：ios
-
-*/
