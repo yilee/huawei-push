@@ -79,7 +79,7 @@ func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) 
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -91,7 +91,7 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Notificat
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result Result
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
@@ -102,7 +102,7 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Notificat
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationResult, error) {
+func (c *HuaweiPushClient) NotificationSend(n *Notification) (*Result, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -113,7 +113,7 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationResul
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result Result
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationResul
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -137,7 +137,7 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Notifica
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result Result
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
@@ -148,7 +148,7 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Notifica
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryAppTags() (*NotificationResult, error) {
+func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -159,18 +159,15 @@ func (c *HuaweiPushClient) QueryAppTags() (*NotificationResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result TagsResult
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -182,7 +179,7 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*NotificationRes
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result Result
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
@@ -193,7 +190,7 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*NotificationRes
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryUserTag(token string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -204,18 +201,15 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*NotificationResult, erro
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result TagsResult
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*MsgResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -230,18 +224,15 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*Notificatio
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result MsgResult
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) GetTokenByDate(date string) (*NotificationResult, error) {
+func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -253,13 +244,10 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*NotificationResult, err
 	if err != nil {
 		return nil, err
 	}
-	var result NotificationResult
+	var result GetTokenResult
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
 	}
 	return &result, nil
 }
