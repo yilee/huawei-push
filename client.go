@@ -36,11 +36,12 @@ func (c *HuaweiPushClient) defaultParams(params url.Values) (url.Values, error) 
 }
 
 func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error) {
-	_, err := RequestAccess(c.clientID, c.clientSecret)
+	params := n.Form()
+	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
-	params := n.Form()
+	params.Add("nsp_svc", singleSendURL)
 	bytes, err := doPost(baseAPI, params)
 	if err != nil {
 		return nil, err
@@ -50,15 +51,32 @@ func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error
 	if err != nil {
 		return nil, err
 	}
+	if result.Error != "" {
+		return nil, errors.New(result.Error)
+	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) BatchSend(n *BatchNotification) (*PushResult, error) {
-	_, err := RequestAccess(c.clientID, c.clientSecret)
+func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) {
+	params := b.Form()
+	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	params.Add("nsp_svc", batchSendURL)
+	bytes, err := doPost(baseAPI, params)
+	if err != nil {
+		return nil, err
+	}
+	var result PushResult
+	err = json.Unmarshal(bytes, &result)
+	if err != nil {
+		return nil, err
+	}
+	if result.Error != "" {
+		return nil, errors.New(result.Error)
+	}
+	return &result, nil
 }
 
 func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*NotificationResult, error) {

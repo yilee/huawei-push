@@ -25,16 +25,21 @@ type BatchNotification struct {
 	expireTime      string   // 消息过期删除时间 unix时间戳,格式：2013-08-29 19:55, 如果不填写，默认超时时间为当前时间后48小时
 }
 
-func NewSingleNotification(deviceToken, message, requestID string) *SingleNotification {
+func NewSingleNotification(deviceToken, message string) *SingleNotification {
 	return &SingleNotification{
 		deviceToken: deviceToken,
 		message:     message,
 		priority:    1,
 		cacheMode:   0,
 		msgType:     0,
-		requestID:   requestID,
+		requestID:   "",
 		expireTime:  "",
 	}
+}
+
+func (s *SingleNotification) SetRequestID(requestID string) *SingleNotification {
+	s.requestID = requestID
+	return s
 }
 
 func (s *SingleNotification) SetHighPriority() *SingleNotification {
@@ -72,6 +77,16 @@ func NewBatchNotification(deviceTokenList []string, message string) *BatchNotifi
 		msgType:         0,
 		expireTime:      "",
 	}
+}
+
+func (b *BatchNotification) Form() url.Values {
+	m := url.Values{}
+	m.Add("deviceTokenList", strings.Join(b.deviceTokenList, ","))
+	m.Add("message", b.message)
+	m.Add("cacheMode", strconv.FormatInt(int64(b.cacheMode), 10))
+	m.Add("msgType", strconv.FormatInt(int64(b.msgType), 10))
+	m.Add("expireTime", b.expireTime)
+	return m
 }
 
 // 通知栏消息

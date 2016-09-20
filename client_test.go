@@ -1,18 +1,18 @@
 package huaweipush
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
 func init() {
 	Init("clientID", "clientSecret")
 }
 
 func TestHuaweiPushClient_SingleSend(t *testing.T) {
-	result, err := defaultClient.SingleSend(NewSingleNotification("deviceToken", "message", "requestID"))
-	fmt.Println("result", result)
-	fmt.Println("err", err)
+	result, err := defaultClient.SingleSend(NewSingleNotification("deviceToken", "message").SetRequestID("requestID").SetHighPriority())
+	if err != nil {
+		t.Errorf("err=%v\n", err)
+		return
+	}
+	t.Logf("result=%v\n", result)
 }
 
 func TestHuaweiPushClient_NotificationSend(t *testing.T) {

@@ -4,6 +4,7 @@ type PushResult struct {
 	resultCode string `json:"resultcode"`
 	message    string `json:"message"`
 	requestID  string `json:"requestID"`
+	Error      string `json:"error"`
 }
 
 type NotificationResult struct {
