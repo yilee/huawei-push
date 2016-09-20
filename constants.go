@@ -3,9 +3,8 @@ package huaweipush
 const (
 	accessTokenAPI      = "https://login.vmall.com/oauth2/token"
 	baseAPI             = "https://api.vmall.com/rest.php"
-	apiMethodPrefix     = "openpush."
-	singleSendURL       = "message.single_send"
-	batchSendURL        = "message.batch_send"
+	singleSendURL       = "openpush.message.single_send"
+	batchSendURL        = "openpush.message.batch_send"
 	lbsSendURL          = "openapi.lbs_send"
 	notificationSendURL = "openapi.notification_send"
 	setUserTagURL       = "openapi.set_user_tag"
