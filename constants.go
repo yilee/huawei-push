@@ -14,20 +14,3 @@ const (
 	queryMsgResultURL   = "openapi.query_msg_result"
 	getTokenByDateURL   = "openapi.get_token_by_date"
 )
-
-var (
-	SystemErrorCodeMap = map[int64]string{
-		0: "成功",
-		1: "一个未知的错误发生",
-		2: "服务临时不可用",
-		3: "未知的方法",
-		4: "应用已达到设定的请求上限",
-	}
-
-	ServcieErrorCodeMap = map[int64]string{
-		20001: "tmID is null",
-		20002: "tmID is too many",
-		20003: "Message is null",
-		20004: "Data too long, please send data less than 1024 bytes",
-	}
-)

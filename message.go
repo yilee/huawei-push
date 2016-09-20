@@ -14,6 +14,10 @@ type AndroidMessage struct {
 }
 
 type IOSMessage struct {
+	aps    map[string]interface{} `json:"doings"`
+	doings int32                  `json:"doings"` // 1：直接打开应用, 3：打开URL
+	url    string                 `json:"url"`    // 链接 当doings的取值为3时，必须携带该字段
+
 }
 
 func NewAndroidMessage(notificationTitle, notificationContent string) *AndroidMessage {
@@ -32,6 +36,18 @@ func (a *AndroidMessage) AddExtra(k, v string) *AndroidMessage {
 
 func (a *AndroidMessage) String() string {
 	bytes, err := json.Marshal(a)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
+}
+
+func NewIOSMessage() *IOSMessage {
+	return &IOSMessage{}
+}
+
+func (i *IOSMessage) String() string {
+	bytes, err := json.Marshal(i)
 	if err != nil {
 		panic(err)
 	}

@@ -6,6 +6,15 @@ func init() {
 	Init("clientID", "clientSecret")
 }
 
+var defaultClient *HuaweiPushClient
+
+func Init(clientID, clientSecret string) {
+	defaultClient = &HuaweiPushClient{
+		clientID:     clientID,
+		clientSecret: clientSecret,
+	}
+}
+
 func TestHuaweiPushClient_SingleSend(t *testing.T) {
 	result, err := defaultClient.SingleSend(NewSingleNotification("deviceToken", "message").SetRequestID("requestID").SetHighPriority())
 	if err != nil {

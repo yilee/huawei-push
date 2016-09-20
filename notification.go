@@ -99,7 +99,7 @@ type Notification struct {
 	sendTime       string          `json:"send_time"`        // 消息生效时间。如果不携带该字段，则表示消息实时生效。实际使用时，该字段精确到分 消息发送时间戳，timestamp格式ISO 8601：2013-06-03T17:30:08+08:00
 	expireTime     string          `json:"expire_time"`      // 消息过期删除时间, 格式同上
 	deviceType     int32           `json:"device_type"`      // 目标设备类型, 1：android; 2：ios, 默认为android
-	message        string          `json:"message"`          // 消息结构体 发送给非android设备的消息内容
+	message        *IOSMessage     `json:"message"`          // 消息结构体 发送给非android设备的消息内容
 	targetUserType int32           `json:"target_user_type"` // 1：IOS开发用户, 2：IOS生产用户
 	allowPeriods   string          `json:"allow_periods"`    // 消息允许展示时间段，时间精确到半小时，24小时制，可以填写一个或者多个时间段, 时间段样例：[[09:30,12:00],[15:00,16:00]]，表示上午9点30到12点之间和下午3点到4点之间可
 }
@@ -114,7 +114,7 @@ func NewNotification(pushType, deviceType int32) *Notification {
 		sendTime:       "",
 		expireTime:     "",
 		deviceType:     deviceType,
-		message:        "",
+		message:        nil,
 		targetUserType: 0,
 		allowPeriods:   "",
 	}
@@ -130,19 +130,40 @@ func (n *Notification) setAndroid(android *AndroidMessage) *Notification {
 	return n
 }
 
+func (n *Notification) setMessage(message *IOSMessage) *Notification {
+	n.message = message
+	return n
+}
+
 func (n *Notification) Form() url.Values {
 	m := url.Values{}
 	m.Add("push_type", strconv.FormatInt(int64(n.pushType), 10))
 	m.Add("tokens", strings.Join(n.tokens, ","))
-	m.Add("tags", strings.Join(n.tags, ","))
-	m.Add("exclude_tags", strings.Join(n.excludeTags, ","))
-	m.Add("android", n.android.String())
-	m.Add("send_time", n.sendTime)
-	m.Add("expireTime", n.expireTime)
+	if len(n.tags) > 0 {
+		m.Add("tags", strings.Join(n.tags, ","))
+	}
+	if len(n.excludeTags) > 0 {
+		m.Add("exclude_tags", strings.Join(n.excludeTags, ","))
+	}
+	if n.android != nil {
+		m.Add("android", n.android.String())
+	}
+	if n.sendTime != "" {
+		m.Add("send_time", n.sendTime)
+	}
+	if n.expireTime != "" {
+		m.Add("expireTime", n.expireTime)
+	}
 	m.Add("device_type", strconv.FormatInt(int64(n.deviceType), 10))
-	m.Add("message", n.message)
-	m.Add("target_user_type", strconv.FormatInt(int64(n.targetUserType), 10))
-	m.Add("allow_periods", n.allowPeriods)
+	if n.message != nil {
+		m.Add("message", n.message.String())
+	}
+	if n.targetUserType != 0 {
+		m.Add("target_user_type", strconv.FormatInt(int64(n.targetUserType), 10))
+	}
+	if n.allowPeriods != "" {
+		m.Add("allow_periods", n.allowPeriods)
+	}
 	return m
 }
 

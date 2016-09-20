@@ -12,15 +12,6 @@ type HuaweiPushClient struct {
 	clientID, clientSecret string
 }
 
-var defaultClient *HuaweiPushClient
-
-func Init(clientID, clientSecret string) {
-	defaultClient = &HuaweiPushClient{
-		clientID:     clientID,
-		clientSecret: clientSecret,
-	}
-}
-
 func (c *HuaweiPushClient) defaultParams(params url.Values) (url.Values, error) {
 	accessToken, err := RequestAccess(c.clientID, c.clientSecret)
 	if err != nil {

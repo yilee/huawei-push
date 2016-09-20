@@ -30,7 +30,7 @@ type MsgResult struct {
 type GetTokenResult struct {
 	RequestID     string `json:"request_id"`
 	ResultCode    string `json:"result_code"`
-	ResultDesc    string `json:"result_desc"`
-	TokenFileURL  string `json:"tokenFile_url"`
-	UnzipPassword string `json:"unzip_password"`
+	ResultDesc    string `json:"result_desc"`    // 当没有获取到文件下载链接时必须填写该字段，用于高速开发者为什么没有获取到文件
+	TokenFileURL  string `json:"tokenFile_url"`  // 文件存在的时候，则该字段填写文件下载链接，每个链接的有效期时间为12小时，12小时过后则链接失效, 文件为.zip格式
+	UnZipPassword string `json:"unzip_password"` // 文件解压密码
 }
