@@ -8,7 +8,8 @@ import (
 
 type HWToken struct {
 	AccessToken      string `json:"access_token"`
-	Expire           int64  `json:"expires_in"`
+	ExpireIn         int64  `json:"expires_in"` // expires_in秒后token过期
+	ExpireAt         int64  `json:"expires_at"`
 	Scope            string `json:"scope"`
 	Error            int32  `json:"error"`
 	ErrorDescription string `json:"error_description"`
@@ -19,13 +20,13 @@ var tokenInstance *HWToken
 func init() {
 	tokenInstance = &HWToken{
 		AccessToken: "",
-		Expire:      -1,
+		ExpireAt:    0,
 	}
 }
 
 func RequestAccess(clientID, clientSecret string) (*HWToken, error) {
 	nowSeconds := time.Now().Unix()
-	if tokenInstance.Expire > nowSeconds && tokenInstance.AccessToken != "" {
+	if tokenInstance.ExpireAt > nowSeconds && tokenInstance.AccessToken != "" {
 		return tokenInstance, nil
 	}
 	form := url.Values{}
@@ -41,6 +42,11 @@ func RequestAccess(clientID, clientSecret string) (*HWToken, error) {
 	if err != nil {
 		return nil, err
 	}
+	newToken.ExpireAt = nowSeconds + newToken.ExpireIn
 	tokenInstance = &newToken
+	// invalid the token
+	time.AfterFunc(time.Second*time.Duration(tokenInstance.ExpireIn), func() {
+		tokenInstance.AccessToken = ""
+	})
 	return tokenInstance, nil
 }

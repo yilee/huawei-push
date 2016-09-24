@@ -1,7 +1,6 @@
 package huaweipush
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -27,7 +26,5 @@ func doPost(url string, form url.Values) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("resp.StatusCode=", resp.StatusCode)
-	fmt.Println("result=", string(result))
 	return result, nil
 }

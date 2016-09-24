@@ -12,6 +12,13 @@ type HuaweiPushClient struct {
 	clientID, clientSecret string
 }
 
+func NewClient(clientID, clientSecret string) *HuaweiPushClient {
+	return &HuaweiPushClient{
+		clientID:     clientID,
+		clientSecret: clientSecret,
+	}
+}
+
 func (c *HuaweiPushClient) defaultParams(params url.Values) (url.Values, error) {
 	accessToken, err := RequestAccess(c.clientID, c.clientSecret)
 	if err != nil {
@@ -93,7 +100,7 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, e
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) NotificationSend(n *Notification) (*Result, error) {
+func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationSendResult, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -104,13 +111,20 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result Result
-	err = json.Unmarshal(bytes, &result)
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
+	var result NotificationSendResult
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
 	if result.Error != "" {
 		return nil, errors.New(result.Error)
+	}
+	if result.ResultCode != 0 {
+		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -128,13 +142,20 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	if err != nil {
 		return nil, err
 	}
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
 	var result Result
-	err = json.Unmarshal(bytes, &result)
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
 	if result.Error != "" {
 		return nil, errors.New(result.Error)
+	}
+	if result.ResultCode != "0" {
+		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -150,8 +171,12 @@ func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
 	if err != nil {
 		return nil, err
 	}
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
 	var result TagsResult
-	err = json.Unmarshal(bytes, &result)
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -170,13 +195,20 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) 
 	if err != nil {
 		return nil, err
 	}
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
 	var result Result
-	err = json.Unmarshal(bytes, &result)
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
 	if result.Error != "" {
 		return nil, errors.New(result.Error)
+	}
+	if result.ResultCode != "0" {
+		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -192,15 +224,20 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	if err != nil {
 		return nil, err
 	}
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
 	var result TagsResult
-	err = json.Unmarshal(bytes, &result)
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*MsgResult, error) {
+// 该接口仅能查询single_send和batch_send接口发送的消息
+func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -215,8 +252,12 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*MsgResult, 
 	if err != nil {
 		return nil, err
 	}
-	var result MsgResult
-	err = json.Unmarshal(bytes, &result)
+	s2, err := strconv.Unquote(string(bytes))
+	if err != nil {
+		return nil, err
+	}
+	var result QueryMsgResult
+	err = json.Unmarshal([]byte(s2), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -239,6 +280,9 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) 
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error != "" {
+		return nil, errors.New(result.Error)
 	}
 	return &result, nil
 }

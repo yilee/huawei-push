@@ -12,5 +12,5 @@ func TestRequestAccess(t *testing.T) {
 		t.Errorf("token=%v\n", token)
 		return
 	}
-	t.Logf("token=%v\n", token)
+	t.Logf("token=%#v\n", token)
 }

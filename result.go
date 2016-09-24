@@ -1,9 +1,16 @@
 package huaweipush
 
 type PushResult struct {
-	ResultCode string `json:"resultcode"`
+	ResultCode int64  `json:"resultcode"`
 	Message    string `json:"message"`
 	RequestID  string `json:"requestID"`
+	Error      string `json:"error"`
+}
+
+type NotificationSendResult struct {
+	ResultCode int64  `json:"result_code"` // 0：成功
+	RequestID  string `json:"request_id"`  // 由服务器生成，方便用户问题追查与定位
+	ResultDesc string `json:"result_desc"` // 失败原因
 	Error      string `json:"error"`
 }
 
@@ -19,7 +26,7 @@ type TagsResult struct {
 	Tags      string `json:"tags"`       // 标签列表, 样例：{"tags":[{"location":["ShangHai","GuangZhou"]},{"age":["20","30"]}]}
 }
 
-type MsgResult struct {
+type QueryMsgResult struct {
 	RequestID string `json:"request_id"` // 由服务器生成，方便用户问题追查与定位
 	Result    []struct {
 		Token  string `json:"token"`  // 用户标识
@@ -28,6 +35,7 @@ type MsgResult struct {
 }
 
 type GetTokenResult struct {
+	Error         string `json:"error"`
 	RequestID     string `json:"request_id"`
 	ResultCode    string `json:"result_code"`
 	ResultDesc    string `json:"result_desc"`    // 当没有获取到文件下载链接时必须填写该字段，用于高速开发者为什么没有获取到文件
