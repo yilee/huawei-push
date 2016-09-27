@@ -120,17 +120,22 @@ func NewNotification(pushType, deviceType int32) *Notification {
 	}
 }
 
-func (n *Notification) addTokens(tokens ...string) *Notification {
+func (n *Notification) AddTokens(tokens ...string) *Notification {
 	n.tokens = append(n.tokens, tokens...)
 	return n
 }
 
-func (n *Notification) setAndroid(android *AndroidMessage) *Notification {
+func (n *Notification) ClearTokens() *Notification {
+	n.tokens = nil
+	return n
+}
+
+func (n *Notification) SetAndroid(android *AndroidMessage) *Notification {
 	n.android = android
 	return n
 }
 
-func (n *Notification) setMessage(message *IOSMessage) *Notification {
+func (n *Notification) SetMessage(message *IOSMessage) *Notification {
 	n.message = message
 	return n
 }
