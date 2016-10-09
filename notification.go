@@ -37,6 +37,11 @@ func NewSingleNotification(deviceToken, message string) *SingleNotification {
 	}
 }
 
+func (s *SingleNotification) SetMsgType(msgType int32) *SingleNotification {
+	s.msgType = msgType
+	return s
+}
+
 func (s *SingleNotification) SetRequestID(requestID string) *SingleNotification {
 	s.requestID = requestID
 	return s
@@ -63,9 +68,15 @@ func (s *SingleNotification) Form() url.Values {
 	m.Add("message", s.message)
 	m.Add("priority", strconv.FormatInt(int64(s.priority), 10))
 	m.Add("cacheMode", strconv.FormatInt(int64(s.cacheMode), 10))
-	m.Add("msgType", strconv.FormatInt(int64(s.msgType), 10))
-	m.Add("requestID", s.requestID)
-	m.Add("expireTime", s.expireTime)
+	if s.msgType > 0 {
+		m.Add("msgType", strconv.FormatInt(int64(s.msgType), 10))
+	}
+	if s.requestID != "" {
+		m.Add("requestID", s.requestID)
+	}
+	if s.expireTime != "" {
+		m.Add("expireTime", s.expireTime)
+	}
 	return m
 }
 

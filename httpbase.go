@@ -1,9 +1,11 @@
 package huaweipush
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -15,8 +17,15 @@ func doPost(url string, form url.Values) ([]byte, error) {
 	req, err = http.NewRequest("POST", url, strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	client := &http.Client{}
+	tryTime := 0
+tryAgain:
 	resp, err = client.Do(req)
 	if err != nil {
+		fmt.Println("huawei push post err", err, tryTime)
+		tryTime += 1
+		if tryTime < 3 {
+			goto tryAgain
+		}
 		return nil, err
 	}
 	defer func() {
@@ -26,5 +35,10 @@ func doPost(url string, form url.Values) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result, nil
+	str := string(result)
+	str, err = strconv.Unquote(str)
+	if err != nil {
+		str = string(result)
+	}
+	return []byte(str), nil
 }

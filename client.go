@@ -49,9 +49,6 @@ func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
 	return &result, nil
 }
 
@@ -70,9 +67,6 @@ func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) 
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
 	}
 	return &result, nil
 }
@@ -94,9 +88,6 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, e
 	if err != nil {
 		return nil, err
 	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
 	return &result, nil
 }
 
@@ -111,20 +102,10 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationSendR
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result NotificationSendResult
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
-	if result.ResultCode != 0 {
-		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -135,6 +116,7 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	if err != nil {
 		return nil, err
 	}
+	params.Add("token", token)
 	params.Add("tag_key", tagKey)
 	params.Add("tag_value", tagValue)
 	params.Add("nsp_svc", setUserTagURL)
@@ -142,20 +124,10 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result Result
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
-	if result.ResultCode != "0" {
-		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -171,12 +143,8 @@ func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result TagsResult
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -189,26 +157,17 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) 
 	if err != nil {
 		return nil, err
 	}
+	params.Add("token", token)
 	params.Add("tag_key", tagKey)
 	params.Add("nsp_svc", deleteUserTagURL)
 	bytes, err := doPost(baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result Result
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
-	}
-	if result.ResultCode != "0" {
-		return nil, errors.New(result.ResultDesc)
 	}
 	return &result, nil
 }
@@ -219,17 +178,14 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	if err != nil {
 		return nil, err
 	}
+	params.Add("token", token)
 	params.Add("nsp_svc", queryUserTagSendURL)
 	bytes, err := doPost(baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result TagsResult
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -252,12 +208,8 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgRes
 	if err != nil {
 		return nil, err
 	}
-	s2, err := strconv.Unquote(string(bytes))
-	if err != nil {
-		return nil, err
-	}
 	var result QueryMsgResult
-	err = json.Unmarshal([]byte(s2), &result)
+	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -280,9 +232,6 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) 
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
-	}
-	if result.Error != "" {
-		return nil, errors.New(result.Error)
 	}
 	return &result, nil
 }
