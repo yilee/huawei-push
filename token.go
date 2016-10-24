@@ -2,6 +2,7 @@ package huaweipush
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"time"
 )
@@ -48,5 +49,6 @@ func RequestAccess(clientID, clientSecret string) (*HWToken, error) {
 	time.AfterFunc(time.Second*time.Duration(tokenInstance.ExpireIn), func() {
 		tokenInstance.AccessToken = ""
 	})
+	fmt.Println("huawei new token", tokenInstance)
 	return tokenInstance, nil
 }

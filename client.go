@@ -3,6 +3,7 @@ package huaweipush
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/url"
 	"strconv"
 	"time"
@@ -49,6 +50,11 @@ func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error
 	if err != nil {
 		return nil, err
 	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.SingleSend(n)
+	}
 	return &result, nil
 }
 
@@ -67,6 +73,11 @@ func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) 
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.BatchSend(b)
 	}
 	return &result, nil
 }
@@ -88,6 +99,11 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, e
 	if err != nil {
 		return nil, err
 	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.LBSSend(n, location)
+	}
 	return &result, nil
 }
 
@@ -106,6 +122,11 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationSendR
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.NotificationSend(n)
 	}
 	return &result, nil
 }
@@ -129,6 +150,11 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	if err != nil {
 		return nil, err
 	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.SetUserTag(token, tagKey, tagValue)
+	}
 	return &result, nil
 }
 
@@ -147,6 +173,11 @@ func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.QueryAppTags()
 	}
 	return &result, nil
 }
@@ -169,6 +200,11 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) 
 	if err != nil {
 		return nil, err
 	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.DeleteUserTag(token, tagKey)
+	}
 	return &result, nil
 }
 
@@ -188,6 +224,11 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.QueryUserTag(token)
 	}
 	return &result, nil
 }
@@ -213,6 +254,11 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgRes
 	if err != nil {
 		return nil, err
 	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.QueryMsgResult(requestID, token)
+	}
 	return &result, nil
 }
 
@@ -232,6 +278,11 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) 
 	err = json.Unmarshal(bytes, &result)
 	if err != nil {
 		return nil, err
+	}
+	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
+		fmt.Println("huawei token error", result)
+		tokenInstance.AccessToken = ""
+		return c.GetTokenByDate(date)
 	}
 	return &result, nil
 }

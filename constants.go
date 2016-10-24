@@ -14,3 +14,8 @@ const (
 	queryMsgResultURL   = "openpush.openapi.query_msg_result"
 	getTokenByDateURL   = "openpush.openapi.get_token_by_date"
 )
+
+const (
+	SessionTimeoutError = "session timeout"
+	SessionInvalidError = "invalid session"
+)

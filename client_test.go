@@ -32,9 +32,9 @@ func TestHuaweiPushClient_SingleSend(t *testing.T) {
 func TestHuaweiPushClient_NotificationSend(t *testing.T) {
 	result, err := defaultClient.NotificationSend(
 		NewNotification(1, 1).
-		AddTokens("tokens1").
-		AddTokens("tokens2").
-		SetAndroid(
+			AddTokens("tokens1").
+			AddTokens("tokens2").
+			SetAndroid(
 			NewAndroidMessage("hi", "baby")))
 
 	if err != nil {
