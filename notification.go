@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type SingleNotification struct {
@@ -143,6 +144,12 @@ func (n *Notification) ClearTokens() *Notification {
 
 func (n *Notification) SetAndroid(android *AndroidMessage) *Notification {
 	n.android = android
+	return n
+}
+
+func (n *Notification) SetTimeToLive(timeToLive int64) *Notification {
+	expireTimeStr := time.Now().Add(time.Millisecond * time.Duration(timeToLive)).Format(time.RFC3339)
+	n.expireTime = expireTimeStr
 	return n
 }
 
