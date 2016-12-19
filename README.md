@@ -1,4 +1,4 @@
-# xiaomi-push
+# huawei-push
 华为推送服务 Golang SDK
 
 full golang implementation of Huawei Push API (http://developer.huawei.com/push)
