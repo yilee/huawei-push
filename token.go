@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/url"
 	"time"
+
+	"golang.org/x/net/context"
 )
 
 type HWToken struct {
@@ -34,7 +36,7 @@ func RequestAccess(clientID, clientSecret string) (*HWToken, error) {
 	form.Add("client_id", clientID)
 	form.Add("client_secret", clientSecret)
 	form.Add("grant_type", "client_credentials")
-	bytes, err := doPost(accessTokenAPI, form)
+	bytes, err := doPost(context.Background(), accessTokenAPI, form)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,8 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+
+	"golang.org/x/net/context"
 )
 
 type HuaweiPushClient struct {
@@ -34,14 +36,14 @@ func (c *HuaweiPushClient) defaultParams(params url.Values) (url.Values, error) 
 	return params, nil
 }
 
-func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error) {
+func (c *HuaweiPushClient) SingleSend(ctx context.Context, n *SingleNotification) (*PushResult, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
 	params.Add("nsp_svc", singleSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -53,19 +55,19 @@ func (c *HuaweiPushClient) SingleSend(n *SingleNotification) (*PushResult, error
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.SingleSend(n)
+		return c.SingleSend(ctx, n)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) {
+func (c *HuaweiPushClient) BatchSend(ctx context.Context, b *BatchNotification) (*PushResult, error) {
 	params := b.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
 	params.Add("nsp_svc", batchSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -77,12 +79,12 @@ func (c *HuaweiPushClient) BatchSend(b *BatchNotification) (*PushResult, error) 
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.BatchSend(b)
+		return c.BatchSend(ctx, b)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, error) {
+func (c *HuaweiPushClient) LBSSend(ctx context.Context, n *Notification, location string) (*Result, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -90,7 +92,7 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, e
 	}
 	params.Add("location", location)
 	params.Add("nsp_svc", lbsSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -102,19 +104,19 @@ func (c *HuaweiPushClient) LBSSend(n *Notification, location string) (*Result, e
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.LBSSend(n, location)
+		return c.LBSSend(ctx, n, location)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationSendResult, error) {
+func (c *HuaweiPushClient) NotificationSend(ctx context.Context, n *Notification) (*NotificationSendResult, error) {
 	params := n.Form()
 	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
 	params.Add("nsp_svc", notificationSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -126,12 +128,12 @@ func (c *HuaweiPushClient) NotificationSend(n *Notification) (*NotificationSendR
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.NotificationSend(n)
+		return c.NotificationSend(ctx, n)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, error) {
+func (c *HuaweiPushClient) SetUserTag(ctx context.Context, token, tagKey, tagValue string) (*Result, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -141,7 +143,7 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	params.Add("tag_key", tagKey)
 	params.Add("tag_value", tagValue)
 	params.Add("nsp_svc", setUserTagURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -153,19 +155,19 @@ func (c *HuaweiPushClient) SetUserTag(token, tagKey, tagValue string) (*Result, 
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.SetUserTag(token, tagKey, tagValue)
+		return c.SetUserTag(ctx, token, tagKey, tagValue)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
+func (c *HuaweiPushClient) QueryAppTags(ctx context.Context) (*TagsResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
 		return nil, err
 	}
 	params.Add("nsp_svc", queryAppTagsSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -177,12 +179,12 @@ func (c *HuaweiPushClient) QueryAppTags() (*TagsResult, error) {
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.QueryAppTags()
+		return c.QueryAppTags(ctx)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) {
+func (c *HuaweiPushClient) DeleteUserTag(ctx context.Context, token, tagKey string) (*Result, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -191,7 +193,7 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) 
 	params.Add("token", token)
 	params.Add("tag_key", tagKey)
 	params.Add("nsp_svc", deleteUserTagURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -203,12 +205,12 @@ func (c *HuaweiPushClient) DeleteUserTag(token, tagKey string) (*Result, error) 
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.DeleteUserTag(token, tagKey)
+		return c.DeleteUserTag(ctx, token, tagKey)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
+func (c *HuaweiPushClient) QueryUserTag(ctx context.Context, token string) (*TagsResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -216,7 +218,7 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	}
 	params.Add("token", token)
 	params.Add("nsp_svc", queryUserTagSendURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -228,13 +230,13 @@ func (c *HuaweiPushClient) QueryUserTag(token string) (*TagsResult, error) {
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.QueryUserTag(token)
+		return c.QueryUserTag(ctx, token)
 	}
 	return &result, nil
 }
 
 // 该接口仅能查询single_send和batch_send接口发送的消息
-func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgResult, error) {
+func (c *HuaweiPushClient) QueryMsgResult(ctx context.Context, requestID, token string) (*QueryMsgResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -245,7 +247,7 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgRes
 		params.Add("token", token)
 	}
 	params.Add("nsp_svc", queryMsgResultURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -257,12 +259,12 @@ func (c *HuaweiPushClient) QueryMsgResult(requestID, token string) (*QueryMsgRes
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.QueryMsgResult(requestID, token)
+		return c.QueryMsgResult(ctx, requestID, token)
 	}
 	return &result, nil
 }
 
-func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) {
+func (c *HuaweiPushClient) GetTokenByDate(ctx context.Context, date string) (*GetTokenResult, error) {
 	params := url.Values{}
 	params, err := c.defaultParams(params)
 	if err != nil {
@@ -270,7 +272,7 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) 
 	}
 	params.Add("date", date)
 	params.Add("nsp_svc", getTokenByDateURL)
-	bytes, err := doPost(baseAPI, params)
+	bytes, err := doPost(ctx, baseAPI, params)
 	if err != nil {
 		return nil, err
 	}
@@ -282,7 +284,7 @@ func (c *HuaweiPushClient) GetTokenByDate(date string) (*GetTokenResult, error) 
 	if result.Error == SessionTimeoutError || result.Error == SessionInvalidError {
 		fmt.Println("huawei token error", result)
 		tokenInstance.AccessToken = ""
-		return c.GetTokenByDate(date)
+		return c.GetTokenByDate(ctx, date)
 	}
 	return &result, nil
 }
